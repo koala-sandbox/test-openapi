@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-openapi
+  labels:
+    app: test-openapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test-openapi
+  template:
+    spec:
+      containers:
+      - name: test-openapi
+        image: me-west1-docker.pkg.dev/koala-ops-demo-373407/koala-repo/test-openapi:latest
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: test-openapi-configmap
+    metadata:
+      labels:
+        app: test-openapi

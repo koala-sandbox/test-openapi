@@ -1,0 +1,71 @@
+ServiceName = "test-openapi"
+Name = "test-openapi"
+Description = ""
+Owners = ["nadaverell@gmail.com"]
+ServerFramework = "go-server"
+ServerMain = ""
+ArtifactRepository = "me-west1-docker.pkg.dev/koala-ops-demo-373407/koala-repo"
+Domain = "cluster.koalaops.com"
+Port = 8080
+
+[KoalaVersionInfo]
+  Version = "1.1.68"
+  DeployWorkflowVersion = "1.1.68"
+
+[Repo]
+  Name = "test-openapi"
+  GitUser = "koala-sandbox"
+  URL = ""
+  Path = ""
+  Token = ""
+
+[OpenAPIConfig]
+  SpecPath = "api/openapi.yaml"
+  QueryPath = ""
+  CodegenTool = "openapi-generator"
+
+[[Environments]]
+  Name = "dev"
+  Namespace = "dev"
+  Cluster = "koala-demo-cluster"
+  IngressEnabled = true
+  IngressHost = "dev.test-openapi.koala-demo-cluster.cluster.koalaops.com"
+  [Environments.EnvDeploymentConfig]
+    AutoDeploy = true
+    HPAEnabled = false
+    HPAMaxReplicas = 0
+    HPATargetCPUUtilizationPercentage = 0
+    HPATargetMemoryUtilizationPercentage = 0
+
+[[Environments]]
+  Name = "prod"
+  Namespace = "prod"
+  Cluster = "koala-demo-cluster"
+  IngressEnabled = true
+  IngressHost = "prod.test-openapi.koala-demo-cluster.cluster.koalaops.com"
+  [Environments.EnvDeploymentConfig]
+    AutoDeploy = false
+    HPAEnabled = false
+    HPAMaxReplicas = 0
+    HPATargetCPUUtilizationPercentage = 0
+    HPATargetMemoryUtilizationPercentage = 0
+
+[SSLConfig]
+  CertName = "test-openapi-tls-cert"
+  Issuer = "letsencrypt"
+  IssuerContactEmail = "nadaverell@gmail.com"
+
+[Metrics]
+  Collector = ""
+  [Metrics.Endpoint]
+    Path = ""
+    Port = 0
+    Scheme = ""
+    Interval = ""
+
+[Tracing]
+  Backend = ""
+  URL = ""
+
+[Profiling]
+  Tool = ""

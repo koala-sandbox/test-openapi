@@ -1,0 +1,26 @@
+apiVersion: skaffold/v4beta1
+kind: Config
+metadata:
+  name: test-openapi
+build:
+  tagPolicy:
+    sha256: {}
+  platforms: ["linux/amd64", "darwin/arm64"]
+  artifacts:
+  - image: me-west1-docker.pkg.dev/koala-ops-demo-373407/koala-repo/test-openapi
+    custom:
+      buildCommand: ./build.sh
+      dependencies:
+        paths:
+          - "go.mod"
+          - "**/*.go"
+manifests:
+  kustomize:
+    paths:
+    - deploy/overlays/dev
+profiles:
+- name: prod
+  manifests:
+    kustomize:
+      paths:
+      - deploy/overlays/prod

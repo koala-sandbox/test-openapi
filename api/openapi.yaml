@@ -1,0 +1,151 @@
+openapi: 3.0.0
+info:
+  description: template for test-openapi API
+  title: test-openapi API
+  version: 1.0.0
+servers:
+- url: https://prod.test-openapi.koala-demo-cluster.cluster.koalaops.com
+- url: https://dev.test-openapi.koala-demo-cluster.cluster.koalaops.com
+- url: http://localhost:8080
+tags:
+- description: An example of how to use OpenAPI
+  name: Item
+- description: endpoint common to all services created with Koala
+  name: Koala
+paths:
+  /items/{itemId}:
+    get:
+      description: Returns a single item
+      operationId: getItemById
+      parameters:
+      - description: ID of item to return
+        explode: false
+        in: path
+        name: itemId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+          description: successful operation
+        "400":
+          description: Invalid ID supplied
+        "404":
+          description: Item not found
+      summary: Find item by ID
+      tags:
+      - Item
+    post:
+      description: Updates a item in the store with form data
+      operationId: updateItemWithForm
+      parameters:
+      - description: ID of item that needs to be updated
+        explode: false
+        in: path
+        name: itemId
+        required: true
+        schema:
+          format: int64
+          type: integer
+        style: simple
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/updateItemWithForm_request'
+        description: Updated item object
+        required: true
+      responses:
+        "405":
+          description: Invalid input
+      summary: Updates a item with form data
+      tags:
+      - Item
+  /items:
+    get:
+      description: Returns a list of items
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Item'
+                type: array
+          description: Successfully returned a list of items
+        "400":
+          description: Invalid ID supplied
+      tags:
+      - Item
+  /koala:
+    get:
+      description: Returns basic details of the service
+      operationId: getKoala
+      responses:
+        "200":
+          content:
+            text/plain:
+              schema:
+                example: Hello world! (test-openapi v0.0.53)
+                type: string
+          description: success
+      tags:
+      - Koala
+components:
+  requestBodies:
+    ItemArray:
+      content:
+        application/json:
+          schema:
+            items:
+              $ref: '#/components/schemas/Item'
+            type: array
+      description: List of items
+      required: true
+  schemas:
+    Item:
+      description: An item
+      example:
+        id: 123
+        name: item_name
+        int_property: 1
+        date: 2000-01-23T04:56:07.000+00:00
+        enum_property: enum1
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+        date:
+          format: date-time
+          type: string
+        enum_property:
+          description: Some enum property
+          enum:
+          - enum1
+          - enum2
+          - enum3
+          type: string
+      required:
+      - id
+      title: Item
+      type: object
+      xml:
+        name: Item
+    updateItemWithForm_request:
+      properties:
+        id:
+          description: ID of the item
+          format: int64
+          type: integer
+        name:
+          description: Updated name of the item
+          type: string
+      type: object
