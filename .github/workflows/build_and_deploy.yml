@@ -1,0 +1,61 @@
+# Build image, push to container registry and deploy to the requested env/cluster.
+
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: "The name of the service"
+        required: false
+        type: string
+      overlay:
+        description: "The overlay to use for Kustomize"
+        required: true
+        type: string
+      tag:
+        description: "The image tag to use, leave empty to use branch default"
+        required: false
+        type: string
+      cluster_name:
+        description: "The cluster name"
+        required: true
+        type: string
+      cluster_location:
+        description: "The cluster region or zone"
+        required: true
+        type: string
+      cloud_provider:
+        description: "The cloud provider"
+        required: true
+        type: string
+      dispatch_id:
+        description: 'A unique ID provided when dispatching this workflow'
+        required: false
+        type: string
+jobs:
+  build:
+    uses: ./.github/workflows/build_image.yml
+    permissions:
+      contents: "write"
+      id-token: "write"
+      packages: "write"
+    with:
+      tag: ${{ inputs.tag }}
+    secrets: inherit
+
+  deploy:
+    # Deploy the new version to the cluster
+    uses: ./.github/workflows/deploy.yml
+    needs: build
+    permissions:
+      contents: "write"
+      id-token: "write"
+    with:
+      service_name: ${{ inputs.service_name }}
+      overlay: ${{ inputs.overlay }}
+      tag: ${{ needs.build.outputs.tag }}
+      cluster_name: ${{ inputs.cluster_name }}
+      cluster_location: ${{ inputs.cluster_location }}
+      cloud_provider: ${{ inputs.cloud_provider }}
+    secrets: inherit
